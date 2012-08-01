@@ -1,0 +1,1 @@
+cmd_drivers/samsung/j4fs/j4fs.o := /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/samsung/j4fs/j4fs.o drivers/samsung/j4fs/j4fs_kernel.o drivers/samsung/j4fs/llid_kernel.o drivers/samsung/j4fs/fsd_common.o 

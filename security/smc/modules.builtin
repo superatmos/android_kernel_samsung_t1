@@ -1,0 +1,2 @@
+kernel/security/smc/tf_driver.ko
+kernel/security/smc/rproc_drm.ko

@@ -1,0 +1,1 @@
+cmd_drivers/misc/mpu3050/built-in.o :=  /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/misc/mpu3050/built-in.o drivers/misc/mpu3050/mpu3050.o drivers/misc/mpu3050/timerirq.o 

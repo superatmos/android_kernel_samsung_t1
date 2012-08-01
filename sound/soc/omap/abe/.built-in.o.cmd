@@ -1,0 +1,1 @@
+cmd_sound/soc/omap/abe/built-in.o :=  /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o sound/soc/omap/abe/built-in.o sound/soc/omap/abe/snd-soc-abe-hal.o 

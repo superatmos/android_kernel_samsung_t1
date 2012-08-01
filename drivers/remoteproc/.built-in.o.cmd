@@ -1,0 +1,1 @@
+cmd_drivers/remoteproc/built-in.o :=  /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/remoteproc/built-in.o drivers/remoteproc/remoteproc.o drivers/remoteproc/omap_remoteproc.o drivers/remoteproc/rpres.o drivers/remoteproc/rpres_dev.o 

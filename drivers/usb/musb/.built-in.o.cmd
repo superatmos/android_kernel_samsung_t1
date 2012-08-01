@@ -1,0 +1,1 @@
+cmd_drivers/usb/musb/built-in.o :=  /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/usb/musb/built-in.o drivers/usb/musb/musb_hdrc.o drivers/usb/musb/omap2430.o 

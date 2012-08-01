@@ -195,13 +195,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true,
 			200000000, OMAP4430_VDD_CORE_OPP100_UV),
 	/* IVA OPP1 - OPP50 */
-	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true,+#ifdef CONFIG_4430_OC_FREQS
- 	 472	
-+      omap4_mpu_opp_enable(1200000000);
- 	 473	
-+      omap4_mpu_opp_enable(1350000000);
- 	 474	
-+#endif
+	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true,
 			133030000, OMAP4430_VDD_IVA_OPP50_UV),
 	/* IVA OPP2 - OPP100 */
 	OPP_INITIALIZER("iva", "dpll_iva_m5x2_ck", "iva", true,

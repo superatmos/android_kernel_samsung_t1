@@ -1,0 +1,1 @@
+cmd_drivers/gpu/pvr/omaplfb.o := /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/gpu/pvr/omaplfb.o drivers/gpu/pvr/omaplfb/omaplfb_displayclass.o drivers/gpu/pvr/omaplfb/omaplfb_linux.o 

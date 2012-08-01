@@ -1,0 +1,1 @@
+cmd_drivers/video/omap2/omapfb/omapfb.o := /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/video/omap2/omapfb/omapfb.o drivers/video/omap2/omapfb/omapfb-main.o drivers/video/omap2/omapfb/omapfb-sysfs.o drivers/video/omap2/omapfb/omapfb-ioctl.o 
