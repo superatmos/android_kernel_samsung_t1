@@ -1,1 +1,0 @@
-cmd_arch/arm/mach-omap2/mailbox_mach.o := /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL   -T arch/arm/mach-omap2/sec_omap.lds  -r -o arch/arm/mach-omap2/mailbox_mach.o arch/arm/mach-omap2/mailbox.o 

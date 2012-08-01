@@ -1,1 +1,0 @@
-cmd_drivers/regulator/built-in.o :=  /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/regulator/built-in.o drivers/regulator/core.o drivers/regulator/dummy.o drivers/regulator/fixed.o drivers/regulator/twl-regulator.o 

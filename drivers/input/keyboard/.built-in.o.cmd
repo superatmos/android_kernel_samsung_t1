@@ -1,1 +1,0 @@
-cmd_drivers/input/keyboard/built-in.o :=  /home/fuss132/cyano/sources/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o drivers/input/keyboard/built-in.o drivers/input/keyboard/cypress-touchkey.o drivers/input/keyboard/cypress-touchkey-firmware.o 

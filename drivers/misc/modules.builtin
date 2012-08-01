@@ -1,6 +1,0 @@
-kernel/drivers/misc/akm8975.ko
-kernel/drivers/misc/fsa9480.ko
-kernel/drivers/misc/omap4_duty_cycle.ko
-kernel/drivers/misc/leds-an30259a.ko
-kernel/drivers/misc/mpu3050/mpu3050.ko
-kernel/drivers/misc/mpu3050/timerirq.ko
