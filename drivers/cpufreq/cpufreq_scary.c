@@ -28,12 +28,19 @@
  * It helps to keep variable names smaller, simpler
  */
 
-#define DEF_FREQUENCY_UP_THRESHOLD		(80)
-#define DEF_FREQUENCY_DOWN_THRESHOLD		(45)
-#define DEFAULT_SLEEP_MAX_FREQ 245760
-#define DEFAULT_SLEEP_MIN_FREQ 122880
-#define DEFAULT_SLEEP_PREV_FREQ 122880 //This is so that if there are any issues resulting in sleep_prev_freq getting set, there will be a backup freq
-#define DEFAULT_PREV_MAX 1024000
+#define DEF_FREQUENCY_UP_THRESHOLD		(85)
+#define DEF_FREQUENCY_DOWN_THRESHOLD		(50)
+#define DEFAULT_FREQ_STEP			(10)
+#define DEF_SAMPLING_DOWN_FACTOR                (2)
+#define MAX_SAMPLING_DOWN_FACTOR                (100000)
+#define DEFAULT_SLEEP_MIN_FREQ                  700000
+#define DEFAULT_SLEEP_MAX_FREQ			800000
+
+/* This is so that if there are any issues resulting in sleep_prev_freq getting set,
+ * there will be a backup freq
+ */
+#define DEFAULT_SLEEP_PREV_FREQ			700000
+#define DEFAULT_PREV_MAX			800000
 static unsigned int suspended;
 static unsigned int sleep_max_freq=DEFAULT_SLEEP_MAX_FREQ;
 static unsigned int sleep_min_freq=DEFAULT_SLEEP_MIN_FREQ;
@@ -50,14 +57,12 @@ static unsigned int sleep_prev_max=DEFAULT_PREV_MAX;
  * this governor will not work.
  * All times here are in uS.
  */
-#define MIN_SAMPLING_RATE_RATIO			(2)
+#define MIN_SAMPLING_RATE_RATIO			(1)
 
 static unsigned int min_sampling_rate;
 
 #define LATENCY_MULTIPLIER			(1000)
 #define MIN_LATENCY_MULTIPLIER			(100)
-#define DEF_SAMPLING_DOWN_FACTOR		(1)
-#define MAX_SAMPLING_DOWN_FACTOR		(10)
 #define TRANSITION_LATENCY_LIMIT		(10 * 1000 * 1000)
 
 
@@ -104,7 +109,7 @@ static struct dbs_tuners {
 	.down_threshold = DEF_FREQUENCY_DOWN_THRESHOLD,
 	.sampling_down_factor = DEF_SAMPLING_DOWN_FACTOR,
 	.ignore_nice = 0,
-	.freq_step = 5,
+	.freq_step = DEFAULT_FREQ_STEP,
 };
 
 static inline cputime64_t get_cpu_idle_time_jiffy(unsigned int cpu,
@@ -132,10 +137,12 @@ static inline cputime64_t get_cpu_idle_time_jiffy(unsigned int cpu,
 
 static inline cputime64_t get_cpu_idle_time(unsigned int cpu, cputime64_t *wall)
 {
-	u64 idle_time = get_cpu_idle_time_us(cpu, wall);
+	u64 idle_time = get_cpu_idle_time_us(cpu, NULL);
 
 	if (idle_time == -1ULL)
 		return get_cpu_idle_time_jiffy(cpu, wall);
+	else
+		idle_time += get_cpu_iowait_time_us(cpu, wall);
 
 	return idle_time;
 }
@@ -376,7 +383,7 @@ static void smartass_suspend(int cpu, int suspend)
     struct cpufreq_policy *policy = this_smartass->cur_policy;
     unsigned int new_freq;
 
-    if (!this_smartass->enable || sleep_max_freq==0) // disable behavior for sleep_max_freq==0
+    if (!this_smartass->enable || sleep_max_freq == 0) // disable behavior for sleep_max_freq==0
         return;
 
     if (suspend) 
@@ -384,13 +391,13 @@ static void smartass_suspend(int cpu, int suspend)
         //If the current min speed is greater than the max sleep, we reset the min to 120mhz, for battery savings
             if (policy->min >= sleep_max_freq)
             {
-                sleep_prev_freq=policy->min;
-                policy->min= sleep_min_freq;
+                sleep_prev_freq = policy->min;
+                policy->min = sleep_min_freq;
             }
             if (policy->max > sleep_max_freq)
             {
-                sleep_prev_max=policy->max;
-                policy->max=sleep_max_freq;
+                sleep_prev_max = policy->max;
+                policy->max = sleep_max_freq;
             }
         if (policy->cur > sleep_max_freq) 
         {
@@ -399,16 +406,16 @@ static void smartass_suspend(int cpu, int suspend)
                 new_freq = policy->max;
             if (new_freq < policy->min)
                 new_freq = policy->min;
-            __cpufreq_driver_target(policy, new_freq,CPUFREQ_RELATION_H);
+            __cpufreq_driver_target(policy, new_freq, CPUFREQ_RELATION_H);
        }
        
     }
     else //Resetting the min speed
     {
         if (policy->min < sleep_prev_freq)
-            policy->min=sleep_prev_freq;
+            policy->min = sleep_prev_freq;
         if (policy->max < sleep_prev_max)
-            policy->max=sleep_prev_max;
+            policy->max = sleep_prev_max;
     }
     
 }
@@ -418,7 +425,7 @@ static void smartass_early_suspend(struct early_suspend *handler)
     int i;
     suspended = 1;
     for_each_online_cpu(i)
-    smartass_suspend(i,1);
+    smartass_suspend(i, 1);
 }
 
 static void smartass_late_resume(struct early_suspend *handler) 
@@ -426,7 +433,7 @@ static void smartass_late_resume(struct early_suspend *handler)
     int i;
     suspended = 0;
     for_each_online_cpu(i)
-    smartass_suspend(i,0);
+    smartass_suspend(i, 0);
 }
 
 static struct early_suspend smartass_power_suspend = 
@@ -524,7 +531,7 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
    		if (this_dbs_info->requested_freq > policy->max)
    			this_dbs_info->requested_freq = policy->max;
 
-        __cpufreq_driver_target(policy, this_dbs_info->requested_freq,CPUFREQ_RELATION_H);
+        __cpufreq_driver_target(policy, this_dbs_info->requested_freq, CPUFREQ_RELATION_H);
 
    		return;
     }
@@ -600,8 +607,8 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 	unsigned int min_freq = ~0;
 	unsigned int max_freq = 0;
 	unsigned int i;	
-	struct cpufreq_frequency_table *freq_table;	
-    suspended=0;
+	struct cpufreq_frequency_table *freq_table;
+	suspended=0;
 
 	this_dbs_info = &per_cpu(cs_cpu_dbs_info, cpu);
 
@@ -680,7 +687,7 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		sleep_min_freq = min_freq;
 		sleep_max_freq = min_freq;								//Minimum CPU frequency in table
 		sleep_prev_freq = min_freq;								//Minimum CPU frequency in table
-		sleep_prev_max= min_freq;								//Minimum CPU frequency in table
+		sleep_prev_max = min_freq;								//Minimum CPU frequency in table
 
 		break;
 
